@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+  <title>Prova de Teoria Musical</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #F5F3F0;
+      font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 780px;
+      background: #FFFFFF;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .card-panel {
+      background: #FFFFFF;
+      padding: 2.5rem 2rem;
+      color: #1E1E2A;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: #2C2C3A;
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6B6B7B;
+      font-weight: 400;
+      margin-bottom: 2.2rem;
+      font-size: 1rem;
+      border-bottom: 1px solid #E8E6E1;
+      padding-bottom: 1.2rem;
+    }
+
+    .input-area {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #4A4A5E;
+      letter-spacing: 0.3px;
+    }
+
+    input, select {
+      background: #FAFAFA;
+      border: 1.5px solid #E0DED9;
+      border-radius: 1.2rem;
+      padding: 0.9rem 1.4rem;
+      font-size: 1rem;
+      color: #1E1E2A;
+      outline: none;
+      transition: 0.2s;
+      font-weight: 500;
+      background: #F9F9F9;
+    }
+
+    input:focus, select:focus {
+      border-color: #B8926A;
+      box-shadow: 0 0 0 3px rgba(184, 146, 106, 0.15);
+      background: #FFFFFF;
+    }
+
+    .btn-primary {
+      background: #2C2C3A;
+      border: none;
+      border-radius: 2.5rem;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      color: #FFFFFF;
+      background: #1F1F2E;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: 0.2s;
+      text-transform: uppercase;
+      width: 100%;
+      margin-top: 0.3rem;
+    }
+
+    .btn-primary:hover {
+      background: #3A3A4E;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.12);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #D1CDC4;
+      color: #2C2C3A;
+      background: #FFFFFF;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: #F3F1ED;
+      border-color: #B8926A;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .quiz-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #F7F6F4;
+      border-radius: 2rem;
+      padding: 0.7rem 1.8rem;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      color: #2C2C3A;
+    }
+
+    .timer-badge {
+      background: #FFFFFF;
+      padding: 0.5rem 1.4rem;
+      border-radius: 2rem;
+      font-weight: 700;
+      color: #1E1E2A;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .question-text {
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      color: #1E1E2A;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin: 1.5rem 0;
+    }
+
+    .option-item {
+      background: #FAFAFA;
+      border: 1.5px solid #E8E5DF;
+      border-radius: 1.5rem;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      color: #2C2C3A;
+    }
+
+    .option-item:hover {
+      background: #F0EDE7;
+      border-color: #CBB295;
+    }
+
+    .option-item.selected {
+      background: #F3EFE9;
+      border-color: #B8926A;
+      box-shadow: 0 5px 14px rgba(184, 146, 106, 0.18);
+    }
+
+    .option-item input[type="radio"] {
+      accent-color: #B8926A;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-right: 0.2rem;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2.5rem;
+    }
+
+    .page-badge {
+      background: #F0EDE7;
+      padding: 0.5rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+    }
+
+    .result-header {
+      text-align: center;
+      background: #F9F8F6;
+      border-radius: 1.8rem;
+      padding: 2rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .status-text {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .download-btn {
+      background: #FFFFFF;
+      border: 1.5px solid #D9D4CC;
+    }
+
+    hr {
+      border-color: #E8E5E0;
+      margin: 1.3rem 0;
+    }
+
+    @media (max-width: 500px) {
+      .card-panel {
+        padding: 1.8rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-wrapper" id="mainApp">
+  <!-- Tela de cadastro -->
+  <div id="registerBlock" class="card-panel">
+    <h1>Prova de Teoria Musical</h1>
+    <div class="subtitle">Baseada no e-book · Cleiton Costa</div>
+    <div class="input-area">
+      <div class="field">
+        <label>👤 Nome completo</label>
+        <input type="text" id="studentNameInput" placeholder="Digite seu nome" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>🎸 Instrumento</label>
+        <select id="instrumentSelect">
+          <option value="Violão">Violão</option>
+          <option value="Bateria" disabled>Bateria (em breve)</option>
+        </select>
+        <small style="color:#6B6B7B; margin-top:0.2rem;">Disponível apenas violão no momento.</small>
+      </div>
+    </div>
+    <button class="btn-primary" id="startExamButton">Iniciar Prova</button>
+    <p style="text-align:center; margin-top:1rem; color:#8E8E9A;">20 questões · tempo cronometrado</p>
+  </div>
+
+  <!-- Tela da prova -->
+  <div id="quizBlock" class="card-panel hidden">
+    <div class="quiz-topbar">
+      <span id="questionCounterDisplay">1/20</span>
+      <span class="timer-badge" id="timerDisplay">00:00</span>
+    </div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options-grid" id="optionsContainer"></div>
+    <div class="nav-row">
+      <button class="btn-primary btn-outline" id="prevButton" style="width:auto;">◀ Anterior</button>
+      <span class="page-badge" id="pageIndicator">1</span>
+      <button class="btn-primary" id="nextButton" style="width:auto;">Próximo ▶</button>
+    </div>
+    <button class="btn-primary hidden" id="finishExamButton" style="margin-top:1.8rem;">✅ Finalizar prova</button>
+  </div>
+
+  <!-- Resultado -->
+  <div id="resultBlock" class="card-panel hidden">
+    <div id="captureSnapshot" style="background:#FFFFFF; border-radius:1.8rem; padding:1.5rem;">
+      <div style="text-align:center; padding:1rem;">
+        <h2 style="color:#2C2C3A;">Resultado</h2>
+        <p style="font-size:1.6rem; font-weight:700;" id="displayNameResult"></p>
+        <p><strong>Instrumento:</strong> <span id="displayInstrumentResult"></span></p>
+        <p><strong>Acertos:</strong> <span id="displayScoreResult"></span>/20</p>
+        <p><strong>Tempo:</strong> <span id="displayTimeResult"></span></p>
+        <p class="status-text" id="displayStatusResult"></p>
+        <p style="color:#6B6B7B;">📅 <span id="displayDateTimeResult"></span></p>
+      </div>
+    </div>
+    <div style="display:flex; gap:1rem; margin-top:1.5rem; flex-wrap:wrap;">
+      <button class="btn-primary btn-outline" id="downloadPNGButton">⬇ Baixar PNG</button>
+      <button class="btn-primary btn-outline" id="shareResultButton">📤 Compartilhar</button>
+      <button class="btn-primary" id="newExamButton">🔄 Nova prova</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Questões atualizadas conforme solicitado
+    const questions = [
+      { question: "Segundo o e-book, a Teoria Musical é comparada a:", options: ["Um livro de regras rígidas", "Um mapa para explorar um território novo", "Uma ciência exata", "Apenas partituras"], correct: 1 },
+      { question: "Qual a ordem das cordas do violão (da mais fina para a mais grossa)?", options: ["E, A, D, G, B, E", "E, B, G, D, A, E", "G, C, E, A, D, G", "A, D, G, B, E, A"], correct: 1 },
+      { question: "Cada casa (fret) no braço do violão representa:", options: ["Um tom inteiro", "Meio tom (semitom)", "Uma oitava", "Dois tons"], correct: 1 },
+      { question: "O acorde de Dó Maior (C) é formado por quais notas?", options: ["C, E, G", "C, Eb, G", "C, E, G#", "C, D, G"], correct: 0 },
+      { question: "O que define se um acorde é maior ou menor?", options: ["A quinta", "A tônica", "A terça", "A oitava"], correct: 2 },
+      { question: "Qual a fórmula da escala maior natural (tons e semitons)?", options: ["T - T - ST - T - T - T - ST", "T - ST - T - T - ST - T - T", "ST - T - T - ST - T - T - T", "T - T - T - ST - T - T - ST"], correct: 0 },
+      { question: "Quais notas formam a escala maior natural de E (Mi)?", options: ["E, F#, G#, A, B, C#, D#, E", "E, F, G, A, B, C, D, E", "E, F#, G, A, B, C#, D#, E", "E, F#, G#, A, B, C, D, E"], correct: 0 },
+      { question: "O que é uma escala pentatônica?", options: ["Escala com 7 notas", "Escala de 5 notas por oitava", "Escala apenas menor", "Escala cromática"], correct: 1 },
+      { question: "O que é o campo harmônico?", options: ["Conjunto de melodias", "Família de acordes que soam bem juntos", "Apenas acordes maiores", "Escala cromática"], correct: 1 },
+      { question: "No campo harmônico de C Maior, o acorde do VI grau é:", options: ["F maior", "Am (lá menor)", "G maior", "B diminuto"], correct: 1 },
+      { question: "A nota da 5ª corda solta do violão é:", options: ["E (Mi)", "A (Lá)", "D (Ré)", "G (Sol)"], correct: 1 },
+      { question: "O padrão de afinação 440Hz corresponde à nota:", options: ["C (Dó)", "E (Mi)", "A (Lá)", "G (Sol)"], correct: 2 },
+      { question: "O que significa 'pestana' na figura de acordes?", options: ["Tocar cordas soltas", "Dedo 1 reto apertando todas as cordas na casa", "Usar palheta", "Tocar apenas baixos"], correct: 1 },
+      { question: "O acorde de Dó menor (Cm) possui qual terça?", options: ["E (Mi)", "Eb (Mi bemol)", "F (Fá)", "G (Sol)"], correct: 1 },
+      { question: "Quantas cordas tem o violão padrão?", options: ["4", "5", "6", "7"], correct: 2 },
+      { question: "Uma tríade é formada por:", options: ["4 notas", "3 notas", "5 notas", "2 notas"], correct: 1 },
+      { question: "Na escala de C maior (5ª corda, casa 3), a casa 8 corresponde a:", options: ["E", "F", "G", "A"], correct: 1 },
+      { question: "A escala menor natural transmite sensação:", options: ["Alegre", "Melancólica/introspectiva", "Neutra", "Dançante"], correct: 1 },
+      { question: "Harmonia é descrita como:", options: ["Arte de combinar acordes simultâneos", "Velocidade musical", "Apenas melodia", "Afinação"], correct: 0 },
+      { question: "Segundo o E-book Teoria Musical, como devo praticar:", options: ["5 horas seguidas", "15 minutos diários com foco", "Apenas leitura", "Nunca usar instrumento"], correct: 1 }
+    ];
+
+    let studentName = "";
+    let instrument = "Violão";
+    let userAnswers = new Array(20).fill(null);
+    let currentPage = 0;
+    let timerInterval = null;
+    let startTime = null;
+    let elapsedSeconds = 0;
+    let examFinished = false;
+
+    const registerBlock = document.getElementById('registerBlock');
+    const quizBlock = document.getElementById('quizBlock');
+    const resultBlock = document.getElementById('resultBlock');
+    const studentNameInput = document.getElementById('studentNameInput');
+    const instrumentSelect = document.getElementById('instrumentSelect');
+    const startExamButton = document.getElementById('startExamButton');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    const finishExamButton = document.getElementById('finishExamButton');
+    const questionCounterDisplay = document.getElementById('questionCounterDisplay');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const timerDisplay = document.getElementById('timerDisplay');
+
+    const displayNameResult = document.getElementById('displayNameResult');
+    const displayInstrumentResult = document.getElementById('displayInstrumentResult');
+    const displayScoreResult = document.getElementById('displayScoreResult');
+    const displayTimeResult = document.getElementById('displayTimeResult');
+    const displayStatusResult = document.getElementById('displayStatusResult');
+    const displayDateTimeResult = document.getElementById('displayDateTimeResult');
+    const downloadPNGButton = document.getElementById('downloadPNGButton');
+    const shareResultButton = document.getElementById('shareResultButton');
+    const newExamButton = document.getElementById('newExamButton');
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function stopTimer() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    }
+
+    function startTimer() {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        if (examFinished) return;
+        elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        timerDisplay.textContent = formatTime(elapsedSeconds);
+      }, 200);
+    }
+
+    function getStatus(score) {
+      if (score >= 17) return "Excelente 🌟";
+      if (score >= 12) return "Bom 👍";
+      return "Ruim 😞";
+    }
+
+    function renderQuestion(index) {
+      const q = questions[index];
+      questionText.textContent = `${index + 1}. ${q.question}`;
+      optionsContainer.innerHTML = "";
+      q.options.forEach((opt, optIdx) => {
+        const label = document.createElement('label');
+        label.className = 'option-item';
+        if (userAnswers[index] === optIdx) label.classList.add('selected');
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'qOption';
+        radio.value = optIdx;
+        radio.checked = (userAnswers[index] === optIdx);
+        radio.addEventListener('change', () => {
+          if (examFinished) return;
+          userAnswers[index] = optIdx;
+          renderQuestion(index);
+        });
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(opt));
+        optionsContainer.appendChild(label);
+      });
+      questionCounterDisplay.textContent = `${index+1}/20`;
+      pageIndicator.textContent = `${index+1}`;
+      prevButton.disabled = (index === 0);
+      if (index === 19) {
+        nextButton.classList.add('hidden');
+        finishExamButton.classList.remove('hidden');
+      } else {
+        nextButton.classList.remove('hidden');
+        finishExamButton.classList.add('hidden');
+      }
+    }
+
+    function goToPage(page) {
+      if (page < 0 || page > 19 || examFinished) return;
+      currentPage = page;
+      renderQuestion(currentPage);
+    }
+
+    function calculateScore() {
+      return userAnswers.reduce((acc, ans, i) => acc + (ans === questions[i].correct ? 1 : 0), 0);
+    }
+
+    function finishExam() {
+      if (examFinished) return;
+      examFinished = true;
+      stopTimer();
+      const score = calculateScore();
+      const status = getStatus(score);
+      const now = new Date();
+      displayNameResult.textContent = studentName;
+      displayInstrumentResult.textContent = instrument;
+      displayScoreResult.textContent = score;
+      displayTimeResult.textContent = formatTime(elapsedSeconds);
+      displayStatusResult.textContent = status;
+      displayDateTimeResult.textContent = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      quizBlock.classList.add('hidden');
+      resultBlock.classList.remove('hidden');
+    }
+
+    function resetToRegister() {
+      stopTimer();
+      examFinished = false;
+      userAnswers = new Array(20).fill(null);
+      currentPage = 0;
+      elapsedSeconds = 0;
+      timerDisplay.textContent = "00:00";
+      quizBlock.classList.add('hidden');
+      resultBlock.classList.add('hidden');
+      registerBlock.classList.remove('hidden');
+      studentNameInput.value = "";
+      instrumentSelect.value = "Violão";
+    }
+
+    startExamButton.addEventListener('click', () => {
+      const name = studentNameInput.value.trim();
+      if (!name) { alert('Informe seu nome.'); return; }
+      studentName = name;
+      instrument = instrumentSelect.value; // sempre Violão
+      examFinished = false;
+      userAnswers.fill(null);
+      currentPage = 0;
+      elapsedSeconds = 0;
+      timerDisplay.textContent = "00:00";
+      registerBlock.classList.add('hidden');
+      quizBlock.classList.remove('hidden');
+      resultBlock.classList.add('hidden');
+      renderQuestion(0);
+      startTimer();
+    });
+
+    prevButton.addEventListener('click', () => goToPage(currentPage - 1));
+    nextButton.addEventListener('click', () => goToPage(currentPage + 1));
+    finishExamButton.addEventListener('click', () => {
+      if (userAnswers.includes(null)) {
+        if (!confirm('Há questões sem resposta. Finalizar assim mesmo?')) return;
+      }
+      finishExam();
+    });
+
+    downloadPNGButton.addEventListener('click', () => {
+      html2canvas(document.getElementById('captureSnapshot'), { scale: 2, backgroundColor: '#FFFFFF' }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `prova_${studentName.replace(/\s/g,'_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    });
+
+    shareResultButton.addEventListener('click', async () => {
+      const canvas = await html2canvas(document.getElementById('captureSnapshot'), { scale: 2, backgroundColor: '#FFFFFF' });
+      canvas.toBlob(async (blob) => {
+        if (navigator.share && blob) {
+          await navigator.share({ title: 'Prova de Teoria Musical', text: `Resultado de ${studentName}`, files: [new File([blob], 'resultado.png', {type:'image/png'})] });
+        } else {
+          alert('Compartilhamento não suportado. Use o botão de download.');
+        }
+      });
+    });
+
+    newExamButton.addEventListener('click', resetToRegister);
+
+    window.addEventListener('load', () => {
+      registerBlock.classList.remove('hidden');
+      quizBlock.classList.add('hidden');
+      resultBlock.classList.add('hidden');
+    });
+  })();
+</script>
+</body>
+</html>
